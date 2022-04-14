@@ -10,14 +10,36 @@ import ReactDOM from 'react-dom';
 //   return <div>Latitude: </div>;
 // };
 
-class App extends React.Component {
-  render() {
-    window.navigator.geolocation.getCurrentPosition(
-      (position) => console.log(position),
-      (err) => console.log(err)
-    )
+// Geolocation api MDN
+// Using class component to learn state initially before hooks
 
-    return <div>Latitude: </div>;
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      lat: null,
+      errorMessage: ''
+    };
+
+    window.navigator.geolocation.getCurrentPosition(
+      position => {
+        this.setState({lat: position.coords.latitude})
+      },
+      (err) => { this.setState({ errorMessage: err.message })}
+    );
+  }
+
+  render() {
+    if (this.state.errorMessage && !this.state.lat) {
+      return <div>ErrorMessage: {this.state.errorMessage}</div>;
+    }
+
+    if (!this.state.errorMessage && this.state.lat) {
+      return <div>Latitude: {this.state.lat}</div>;
+    }
+
+    return <div>LOADING!</div>;
   }
 }
 
